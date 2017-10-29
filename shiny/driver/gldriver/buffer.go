@@ -13,6 +13,8 @@ type bufferImpl struct {
 	buf  []byte
 	rgba image.RGBA
 	size image.Point
+	
+	t screen.Texture
 }
 
 func (b *bufferImpl) Release()                {}
