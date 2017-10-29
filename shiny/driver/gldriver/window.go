@@ -116,23 +116,28 @@ func (w *windowImpl) Release() {
 }
 
 func (w *windowImpl) Upload(dp image.Point, src screen.Buffer, sr image.Rectangle) {
-	originalSRMin := sr.Min
-	sr = sr.Intersect(src.Bounds())
 	if sr.Empty() {
 		return
 	}
-	dp = dp.Add(sr.Min.Sub(originalSRMin))
-	// TODO: keep a texture around for this purpose?
-	t, err := w.s.NewTexture(sr.Size())
-	if err != nil {
-		panic(err)
+	{
+		src := src.(*bufferImpl)
+		if src.t == nil || src.t.Size() != src.Size(){
+			t, err := w.s.NewTexture(src.Size())
+			if err != nil{
+				panic(err)
+			}
+			if src.t != nil{
+				src.t.Release()
+			}
+			src.t = t
+		}
+		src.t.Upload(sr.Min, src, sr)
+		dp = dp.Sub(sr.Min)
+		w.Draw(f64.Aff3{
+			1, 0, float64(dp.X),
+			0, 1, float64(dp.Y),
+		}, src.t, sr, draw.Src, nil)
 	}
-	t.Upload(image.Point{}, src, sr)
-	w.Draw(f64.Aff3{
-		1, 0, float64(dp.X),
-		0, 1, float64(dp.Y),
-	}, t, t.Bounds(), draw.Src, nil)
-	t.Release()
 }
 
 func useOp(glctx gl.Context, op draw.Op) {
