@@ -284,7 +284,7 @@ uintptr_t doNewWindow(int width, int height, char* title) {
 			NSOpenGLPFAColorSize,     24,
 			NSOpenGLPFAAlphaSize,     8,
 			NSOpenGLPFADepthSize,     16,
-			NSOpenGLPFADoubleBuffer,
+//			NSOpenGLPFADoubleBuffer,	//TODO(as):option to set this
 			NSOpenGLPFAAllowOfflineRenderers,
 			0
 		};
